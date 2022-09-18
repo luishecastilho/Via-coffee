@@ -1,0 +1,49 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Clan {
+    id        String   @id @default(uuid())
+    name      String
+    emblem    String
+    createdAt DateTime @default(now())
+    users     User[]
+}
+
+model User {
+    id        String     @id @default(uuid())
+    deleted   Boolean
+    clanId    String
+    name      String
+    email     String
+    password  String
+    createdAt DateTime   @default(now())
+    purchases Purchase[]
+    brews     Brew[]
+
+    Clan Clan @relation(fields: [clanId], references: [id])
+}
+
+model Purchase {
+    id          String   @id @default(uuid())
+    userId      String
+    picture     String
+    description String
+    price       Int
+    createdAt   DateTime @default(now())
+
+    User User @relation(fields: [userId], references: [id])
+}
+
+model Brew {
+    id        String   @id @default(uuid())
+    userId    String
+    createdAt DateTime @default(now())
+
+    User User @relation(fields: [userId], references: [id])
+}
